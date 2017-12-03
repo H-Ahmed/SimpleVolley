@@ -1,14 +1,8 @@
 package com.example.android.simpleloginvolley;
 
-
-import android.annotation.SuppressLint;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
-
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -21,33 +15,25 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class LoginActivity extends AppCompatActivity {
+/**
+ * Created by Hesham on 12/3/2017.
+ */
 
+public class BackgroundTask {
 
-    private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
-    private RecyclerView.LayoutManager layoutManager;
-    private ArrayList<Contact> mArrayList = new ArrayList<>() ;
+    private Context mContext;
+    ArrayList<Contact> arrayList;
     private String serverUrl = "http://dev.alsokary.com:8005/api/glocodata";
 
+    public BackgroundTask (Context context){
+        mContext = context;
+    }
 
-
-    @SuppressLint("LongLogTag")
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-
-        recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setHasFixedSize(true);
-
+    public ArrayList<Contact> getList(){
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, serverUrl, null,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        Log.d("lksdjflksjf", String.valueOf(response));
                         int count = 0;
                         while (count < response.length()){
                             try {
@@ -56,28 +42,26 @@ public class LoginActivity extends AppCompatActivity {
                                         jsonObject.getString("meter_id"),
                                         jsonObject.getInt("value"),
                                         jsonObject.getString("timestamp"));
-                                mArrayList.add(contact);
-                                Log.d("lksdjflksjf", jsonObject.getString("meter_id"));
+                                arrayList.add(contact);
                                 count++;
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
-                        Toast.makeText(getApplicationContext(), "Greate....", Toast.LENGTH_LONG).show();
-                        adapter = new RecyclerAdapter(mArrayList);
-                        recyclerView.setAdapter(adapter);
+                        Toast.makeText(mContext, "Greate....", Toast.LENGTH_LONG).show();
+                        Log.d("Response ResponseResponseResponse Lenght", String.valueOf(arrayList.size()));
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), "Error....", Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, "Error....", Toast.LENGTH_LONG).show();
                 error.printStackTrace();
             }
         });
-        MySingleton.getInstance(getApplicationContext()).addToRequestQeue(jsonArrayRequest);
 
 
+        MySingleton.getInstance(mContext).addToRequestQeue(jsonArrayRequest);
 
-
+        return arrayList;
     }
 }

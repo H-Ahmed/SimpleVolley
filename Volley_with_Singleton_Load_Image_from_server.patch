@@ -1,0 +1,116 @@
+Index: app/src/main/java/com/example/android/simpleloginvolley/LoginActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/android/simpleloginvolley/LoginActivity.java	(date 1512305014000)
++++ app/src/main/java/com/example/android/simpleloginvolley/LoginActivity.java	(date 1512307370000)
+@@ -1,11 +1,14 @@
+ package com.example.android.simpleloginvolley;
+ 
++import android.graphics.Bitmap;
+ import android.support.v7.app.AppCompatActivity;
+ import android.os.Bundle;
+ import android.view.View;
+ import android.widget.Button;
+ import android.widget.EditText;
++import android.widget.ImageView;
+ import android.widget.TextView;
++import android.widget.Toast;
+ 
+ import com.android.volley.Cache;
+ import com.android.volley.Network;
+@@ -16,14 +19,15 @@
+ import com.android.volley.toolbox.BasicNetwork;
+ import com.android.volley.toolbox.DiskBasedCache;
+ import com.android.volley.toolbox.HurlStack;
++import com.android.volley.toolbox.ImageRequest;
+ import com.android.volley.toolbox.StringRequest;
+ import com.android.volley.toolbox.Volley;
+ 
+ public class LoginActivity extends AppCompatActivity {
+ 
+-    private TextView textMessage;
++    private ImageView imageView;
+     private Button buttonLogin;
+-    private String serverUrl = "http://192.168.1.5:8888/greetings.php";
++    private String serverUrl = "http://192.168.1.5:8888/strawberry.png";
+ 
+ 
+     @Override
+@@ -31,27 +35,29 @@
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_login);
+ 
+-        textMessage = (TextView) findViewById(R.id.txt);
++        imageView = (ImageView) findViewById(R.id.img);
+         buttonLogin = (Button) findViewById(R.id.bn);
+ 
+         buttonLogin.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
+-                StringRequest stringRequest = new StringRequest(Request.Method.POST, serverUrl,
+-                        new Response.Listener<String>() {
++                ImageRequest imageRequest = new ImageRequest(serverUrl,
++                        new Response.Listener<Bitmap>() {
+                             @Override
+-                            public void onResponse(String response) {
+-                                textMessage.setText(response);
++                            public void onResponse(Bitmap response) {
++                                imageView.setImageBitmap(response);
+                             }
+-                        }, new Response.ErrorListener() {
+-                    @Override
+-                    public void onErrorResponse(VolleyError error) {
+-                        textMessage.setText("That didn't work!");
+-                        error.printStackTrace();
+-                    }
+-                });
++                        }, 0, 0, ImageView.ScaleType.CENTER_CROP, null,
++                        new Response.ErrorListener() {
++                            @Override
++                            public void onErrorResponse(VolleyError error) {
++                                Toast.makeText(getApplicationContext(),"Error...", Toast.LENGTH_SHORT).show();
++                                error.printStackTrace();
++
++                            }
++                        });
+ 
+-                MySingleton.getInstance(getApplicationContext()).addToRequestQeue(stringRequest);
++                MySingleton.getInstance(getApplicationContext()).addToRequestQeue(imageRequest);
+ 
+ 
+             }
+Index: app/src/main/res/layout/activity_login.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_login.xml	(date 1512305014000)
++++ app/src/main/res/layout/activity_login.xml	(date 1512307370000)
+@@ -7,19 +7,17 @@
+     android:orientation="vertical"
+     tools:context="com.example.android.simpleloginvolley.LoginActivity">
+ 
+-    <TextView
+-        android:id="@+id/txt"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:layout_gravity="center"
+-        android:gravity="center"
+-        android:text="Server Response" />
++    <ImageView
++        android:layout_width="match_parent"
++        android:layout_height="400dp"
++        android:id="@+id/img"/>
+ 
+     <Button
+         android:id="@+id/bn"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_gravity="center"
+-        android:text="Get Server Data" />
++        android:text="Get Server Imae"
++        android:layout_marginTop="15dp"/>
+ 
+ </LinearLayout>
