@@ -24,7 +24,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView textMessage;
     private Button buttonLogin;
     private String serverUrl = "http://192.168.1.5:8888/greetings.php";
-    private RequestQueue requestQueue;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +33,6 @@ public class LoginActivity extends AppCompatActivity {
 
         textMessage = (TextView) findViewById(R.id.txt);
         buttonLogin = (Button) findViewById(R.id.bn);
-        Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024);
-        Network network = new BasicNetwork(new HurlStack());
-        requestQueue = new RequestQueue(cache, network);
-        requestQueue.start();
 
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,18 +42,16 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onResponse(String response) {
                                 textMessage.setText(response);
-                                requestQueue.stop();
                             }
                         }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         textMessage.setText("That didn't work!");
                         error.printStackTrace();
-                        requestQueue.stop();
                     }
                 });
 
-                requestQueue.add(stringRequest);
+                MySingleton.getInstance(getApplicationContext()).addToRequestQeue(stringRequest);
 
 
             }
