@@ -1,12 +1,14 @@
 package com.example.android.simpleloginvolley;
 
 
-import android.annotation.SuppressLint;
+
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 
@@ -21,7 +23,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class LoginActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
 
     private RecyclerView recyclerView;
@@ -29,14 +31,23 @@ public class LoginActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     private ArrayList<Contact> mArrayList = new ArrayList<>() ;
     private String serverUrl = "http://dev.alsokary.com:8005/api/glocodata";
+    private Button addDataButton;
 
 
 
-    @SuppressLint("LongLogTag")
-    @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_main);
+
+        addDataButton = (Button) findViewById(R.id.bn_add_data) ;
+        addDataButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AddReadingActivity.class);
+                startActivity(intent);
+            }
+        });
 
         recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         layoutManager = new LinearLayoutManager(this);
@@ -47,7 +58,6 @@ public class LoginActivity extends AppCompatActivity {
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        Log.d("lksdjflksjf", String.valueOf(response));
                         int count = 0;
                         while (count < response.length()){
                             try {
@@ -57,13 +67,11 @@ public class LoginActivity extends AppCompatActivity {
                                         jsonObject.getInt("value"),
                                         jsonObject.getString("timestamp"));
                                 mArrayList.add(contact);
-                                Log.d("lksdjflksjf", jsonObject.getString("meter_id"));
                                 count++;
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
-                        Toast.makeText(getApplicationContext(), "Greate....", Toast.LENGTH_LONG).show();
                         adapter = new RecyclerAdapter(mArrayList);
                         recyclerView.setAdapter(adapter);
                     }

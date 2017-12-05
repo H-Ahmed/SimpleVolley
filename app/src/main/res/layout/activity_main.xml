@@ -5,7 +5,13 @@
     android:layout_margin="16dp"
     android:orientation="vertical">
 
-
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="16dp"
+        android:text="add data"
+        android:id="@+id/bn_add_data"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/my_recycler_view"
