@@ -1,7 +1,6 @@
 package com.example.android.simpleloginvolley;
 
 
-
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -25,22 +25,37 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-
+    private Button mLoginButton;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
-    private ArrayList<Contact> mArrayList = new ArrayList<>() ;
+    private ArrayList<Contact> mArrayList = new ArrayList<>();
     private String serverUrl = "http://dev.alsokary.com:8005/api/glocodata";
     private Button addDataButton;
-
-
+    private TextView mName, mEmail;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        addDataButton = (Button) findViewById(R.id.bn_add_data) ;
+        mName = (TextView) findViewById(R.id.name);
+        mEmail = (TextView) findViewById(R.id.email);
+        if (getIntent() != null && getIntent().getExtras() != null) {
+            Bundle bundle = getIntent().getExtras();
+            mName.setText("Welcome " + bundle.getString("name"));
+            mEmail.setText("Email: " + bundle.getString("email"));
+        }
+
+        mLoginButton = (Button) findViewById(R.id.bn_login);
+        mLoginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            }
+        });
+
+        addDataButton = (Button) findViewById(R.id.bn_add_data);
         addDataButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONArray response) {
                         int count = 0;
-                        while (count < response.length()){
+                        while (count < response.length()) {
                             try {
                                 JSONObject jsonObject = response.getJSONObject(count);
                                 Contact contact = new Contact(jsonObject.getInt("id"),
@@ -85,7 +100,6 @@ public class MainActivity extends AppCompatActivity {
         MySingleton.getInstance(getApplicationContext()).addToRequestQeue(jsonArrayRequest);
 
 
-
-
     }
 }
+
